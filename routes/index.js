@@ -18,7 +18,7 @@ router.get('/chat', function (req, res, next) {
 
 
 //_______________________________PRODUCTS__________________________________________
-router.get('/products-home', function(req, res, next){
+/* router.get('/products-home', function(req, res, next){
   const filePath = path.join(__dirname, '../client', 'products-home.html')
   res.sendFile(filePath);
   //res.sendFile(`${__dirname}/client/products-home.html`);
@@ -29,7 +29,7 @@ router.post('/products', pm.addProduct);
 router.get('/products/export', pm.exportProducts);
 router.patch('/products', pm.editDesc);
 router.delete('/products', pm.deleteProduct);
-router.get('/products/search/id', pm.searchProducts);
+router.get('/products/search/id', pm.searchProducts); */
 
 
 

@@ -10,7 +10,10 @@ module.exports = {
     const schema = joi.object({
       name: joi.string().required().min(2).max(200),
       phone: joi.string().required() /* .regex(/^[0-9]\d{8,11}$/) */,
-      email: joi.string().required().regex(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/),
+      email: joi
+        .string()
+        .required()
+        .regex(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/),
       countryinput: joi.number().required(),
     });
 
@@ -30,12 +33,11 @@ module.exports = {
         reqBody.name,
         reqBody.phone,
         reqBody.email,
-        reqBody.country,
+        reqBody.countryinput,
       ]);
       //awaiting the query which includes the connection already. Will return [rows, fields]
 
       console.log(result);
-
     } catch (err) {
       console.log(err);
     }

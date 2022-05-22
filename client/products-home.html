@@ -6,24 +6,29 @@
     <title>Products-home</title>
 </head>
 <body>
+    <h3>Get all products</h3>
+    <form method="get" action="/products">
+        <button type="submit">Get All Products</button>
+    </form>
+
     <h3>Export product</h3>
-    <form method="get" action="/products/export">
+    <form method="get" action="/export">
         <button type="submit">Export products</button>
     </form>
 
     <h3>Add product</h3>
-    <form method="post" action="products">
+    <form method="post" action="/products">
         <div>
             <label>Name</label>
-            <input type="text" name="name">
+            <input type="text" name="name" id="name">
         </div>
         <div>
             <label>Description</label>
-            <input type="text" name="desc">
+            <input type="text" name="desc" id="desc">
         </div>
         <div>
             <label>Price</label>
-            <input type="number" name="price">
+            <input type="number" name="price" id="price">
         </div>
        <!-- todo: add image -->
     
