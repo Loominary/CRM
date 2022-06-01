@@ -1,7 +1,6 @@
 const database = require("./database");
 const joi = require("joi");
-const fs = require("fs");
-const path = require("path");
+const fileMgmt = require("../shared/fileMgmt");
 
 module.exports = {
   addCustomer: async function (req, res, next) {
@@ -44,13 +43,32 @@ module.exports = {
     res.send(`${reqBody.name} added successfully`);
   },
 
-  customersList: async function (req, res) {
-    const sql =
-      "SELECT cust.name, cust.phone, cust.email, countries.name AS country FROM `customers` cust JOIN countries ON cust.country_id = countries.id;";
+  customersList: async function (req, res, next) {
+    const param = req.query;
+
+    const schema = joi.object({
+      column: joi
+        .string()
+        .valid("name", "email", "country_name")
+        .default("name"),
+      sort: joi.string().valid("ASC", "DESC").default("ASC"),
+    });
+
+    const { error, value } = schema.validate(param);
+
+    const fieldsMap = new Map([
+      ['name', 'customers.name'],
+      ['email', 'customers.email'],
+      ['country_name', 'countries.name'],
+  ]);
+
+    const sql = `SELECT customers.id, customers.name, customers.phone, customers.email,  
+    countries.id AS country_id, countries.name AS country_name, countries.country_code  
+    FROM customers LEFT JOIN countries ON customers.country_id = countries.id 
+    ORDER BY ${fieldsMap.get(value.column)} ${value.sort};`;
 
     try {
-      const result = await database.query(sql); //awaiting the query which includes the connection already. Will return [rows, fields]
-      console.log(result);
+      const result = await database.query(sql);
       res.send(result[0]);
     } catch (err) {
       console.log(err);
@@ -67,31 +85,53 @@ module.exports = {
       "cntr.name AS country_name FROM customers cust " + //shows the name of country as new col AS country_name
       "LEFT JOIN countries cntr ON cust.country_id = cntr.id ORDER BY cust.name ASC";
 
-    try {
-      const result = await database.query(sql);
-
-      const now = new Date().getTime();
-      const filePath = path.join(__dirname, "../files", `customers-${now}.txt`);
-      const stream = fs.createWriteStream(filePath);
-
-      stream.on("open", function () {
-        stream.write(JSON.stringify(result[0]));
-        stream.end();
-      });
-      stream.on("finish", function () {
-        res.send(`Success. CUSTOMERS file created at: ${filePath}`);
-      });
-    } catch (err) {
-      console.log(err);
-    }
+    fileMgmt.exportToFile(res, sql, "customers");
   },
 
-  //todo: sort customers by column
-  //sql: SORT BY ASC/DESC
+
 
   //todo: search in customers by parameter (name, email, country)
   //sql: SELECT WHERE
-  findCustomer: async function (req, res, next) {},
+  findCustomer: async function (req, res, next) {
+    const param = req.query;
+
+        const schema = joi.object({
+            search: joi.string().required().min(2)
+        });
+
+        const { error, value } = schema.validate(param);
+
+        if (error) {
+            res.status(400).send(`search error: ${error}`);
+            throw error;
+        }
+
+        const searchQuery = `%${value.search}%`;
+
+        const sql = `SELECT customers.id, customers.name, customers.phone, customers.email,   
+            countries.id AS country_id, countries.name AS country_name, countries.country_code  
+            FROM customers LEFT JOIN countries ON customers.country_id = countries.id 
+            WHERE customers.name LIKE ? OR customers.email LIKE ? OR customers.country_id LIKE ? 
+            ORDER BY customers.name ASC;`;
+
+        try {
+            const result = await database.query(
+                sql,
+                [
+                    searchQuery,
+                    searchQuery,
+                    searchQuery,
+                ]
+            );
+            
+            res.send(result[0]);
+        } catch (err) {
+            res.status(400).send(`search error: ${err}`);
+            throw error;
+        }
+    },
+
+  
 
   //todo: edit customers
   updateCustomer: async function (req, res, next) {},
@@ -101,32 +141,3 @@ module.exports = {
 };
 
 //_________________________OLD CODE________________________
-/* databases.getConnection()
-            .then(connection=> databases.runQuery(connection, sql))
-            .then(result => res.send(result))
-            .catch(err => console.log(err)); */
-
-/* database.pool.getConnection(function (connErr, connection) {
-            if (connErr) throw connErr; // not connected!
-
-            
-
-            connection.query(
-                sql,
-                [name, phone, email, countryId],
-                function (sqlErr, result, fields) {
-                    if (sqlErr) throw sqlErr;
-
-                    console.log(fields);
-                    console.log(result);
-                });
-        }); */
-/*  const qs = req.body;
-        const name = qs.name;
-        const phone = qs.phone;
-        const email = qs.email;
-        const country = qs.country;
-
-        if (!name || name.length === 0) {
-            throw ('ERROR: name is empty');
-        } */

@@ -1,7 +1,7 @@
 const database = require("./database");
 
 module.exports = {
-  addorder: async function (req, res, next) {
+  addOrder: async function (req, res, next) {
     const qs = req.body;
     const custId = req.custId;
     const prodId = req.prodId;

@@ -1,11 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const cm = require("../controllers/customers");
-const path = require("path");
+const fileMgmt = require('../shared/fileMgmt');
 
 //__________________________________CUSTOMERS__________________________________________
 router.get("/home", function (req, res, next) {
-  const filePath = path.join(__dirname, "../client", "customers-home.html");
+  const filePath = fileMgmt.getHtmlFilePath("customers-home.html");
   res.sendFile(filePath);
 });
 

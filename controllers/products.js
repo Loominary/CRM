@@ -1,7 +1,6 @@
 const database = require("./database");
 const joi = require("joi");
-const fs = require("fs");
-const path = require("path");
+const fileMgmt = require('../shared/fileMgmt');
 
 module.exports = {
   addProduct: async function (req, res, next) {
@@ -37,12 +36,11 @@ module.exports = {
     );
   },
 
-  productsList: async function (req, res) {
+  productsList: async function (req, res, next) {
     const sql = "SELECT * FROM products";
 
     try {
-      //const connection = await database.getConnection(); //awaiting connection - INCLUDED IN DATABASE WITH query()
-      const result = await database.query(sql); //awaiting results
+      const result = await database.query(sql); 
       res.send(result[0]);
     } catch (err) {
       console.log(err);
@@ -54,24 +52,7 @@ module.exports = {
     const sql =
       "SELECT name, description, price FROM products ORDER BY name ASC;";
 
-    try {
-      const result = await database.query(sql);
-
-      const now = new Date().getTime();
-      const filePath = path.join(__dirname, "../files", `products-${now}.txt`);
-      const stream = fs.createWriteStream(filePath);
-
-      stream.on("open", function () {
-        stream.write(JSON.stringify(result[0]));
-        stream.end();
-      });
-
-      stream.on("finish", function () {
-        res.send(`PRODUCTS export file created at ${filePath}`);
-      });
-    } catch (err) {
-      console.log(err);
-    }
+      fileMgmt.exportToFile(res, sql, 'products');
   },
 
   //todo: search in products by param
