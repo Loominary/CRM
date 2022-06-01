@@ -10,7 +10,7 @@ router.get("/home", function (req, res, next) {
 });
 
 router.get      ("/", cm.customersList);
-router.get      ("/details", cm.findCustomer);
+router.get      ("/find", cm.findCustomer);
 router.get      ("/export", cm.exportCustomers);
 router.patch    ("/", cm.updateCustomer);
 router.post     ("/", cm.addCustomer);
