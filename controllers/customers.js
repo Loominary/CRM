@@ -19,7 +19,8 @@ module.exports = {
     const { error } = schema.validate(reqBody);
 
     if (error) {
-      res.send(`error adding customer ${error}`);
+      console.log(error);
+      res.send(`error adding customer`);
       return;
     }
 
@@ -55,6 +56,12 @@ module.exports = {
     });
 
     const { error, value } = schema.validate(param);
+
+    if (error){
+      console.log(error);
+      res.status(400).send('Something has went wrong');
+      return;
+    }
 
     const fieldsMap = new Map([
       ['name', 'customers.name'],

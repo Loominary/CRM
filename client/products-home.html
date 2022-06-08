@@ -8,7 +8,15 @@
 <body>
     <h3>Get all products</h3>
     <form method="get" action="/products">
-        <button type="submit">Get All Products</button>
+        <select name="column">
+            <option value="name">Sort by product name</option>
+            <option value="email">Sort by product price</option>
+        </select>
+        <select name="sort">
+            <option value="ASC">Sort A-Z</option>
+            <option value="DESC">Sort Z-A</option>
+        </select>
+        <button type="submit">Get Products</button>
     </form>
 
     <h3>Export product</h3>

@@ -1,6 +1,6 @@
 const database = require("./database");
 const joi = require("joi");
-const fileMgmt = require('../shared/fileMgmt');
+const fileMgmt = require("../shared/fileMgmt");
 
 module.exports = {
   addProduct: async function (req, res, next) {
@@ -37,10 +37,31 @@ module.exports = {
   },
 
   productsList: async function (req, res, next) {
-    const sql = "SELECT * FROM products";
+    const param = req.query;
+
+    const schema = joi.object({
+      column: joi.string().valid("name", "price").default("name"),
+      sort: joi.string().valid("ASC", "DESC").default("ASC"),
+    });
+
+    const { error, value } = schema.validate(param);
+    if (error) {
+      console.log(error);
+      res.status(400).send();
+      return;
+    }
+
+    const fieldsMap = new Map([
+      ["name", "products.name"],
+      ["price", "products.price"],
+    ]);
+
+    const sql = `SELECT * FROM products ORDER BY ${fieldsMap.get(
+      value.column
+    )} ${value.sort}`;
 
     try {
-      const result = await database.query(sql); 
+      const result = await database.query(sql);
       res.send(result[0]);
     } catch (err) {
       console.log(err);
@@ -52,7 +73,7 @@ module.exports = {
     const sql =
       "SELECT name, description, price FROM products ORDER BY name ASC;";
 
-      fileMgmt.exportToFile(res, sql, 'products');
+    fileMgmt.exportToFile(res, sql, "products");
   },
 
   //todo: search in products by param
