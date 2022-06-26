@@ -25,7 +25,6 @@ async function query(sql, values){
 
 
 module.exports = {
-    pool,
    query,
     
 }

@@ -2,7 +2,8 @@ const jwt = require("jsonwebtoken");
 const config = require("../config/dev");
 const joi = require("joi");
 const database = require("./database");
-const bcrypt = require('bcrypt')
+const bcrypt = require("bcrypt");
+
 
 module.exports = {
   login: async function (req, res, next) {
@@ -13,37 +14,43 @@ module.exports = {
       password: joi.string().required().min(6),
     });
 
-    const {error} = schema.validate(reqBody);
-    
-    if (error){
-        console.log(error.details[0].message);
-        res.status(401).send('Unauthorized');
-        return;
+    const { error } = schema.validate(reqBody);
+
+    if (error) {
+      console.log(error.details[0].message);
+      res.status(401).send("Unauthorized");
+      return;
     }
 
-    const sql = 'SELECT * FROM users WHERE email=?;';
+    const sql = "SELECT * FROM users WHERE email=?;";
 
-    try{
-        const result = await  database.query(sql, [reqBody.email]);
-        const rows = result[0];
-        //
-        const validPassword = await bcrypt.compare(reqBody.password, rows[0].password_hash)
-        if (!validPassword) throw 'Invalid password';
-    }
-    catch (err){
-        console.log(`Error: ${err}`);
-        res.status(401).send('Unauthorized');
-        return;
-    }
+    try {
+      const result = await database.query(sql, [reqBody.email]);
+      const rows = result[0];
+      const validPassword = await bcrypt.compare(reqBody.password, rows[0].password_hash);
+      if (!validPassword) throw 'Invalid password';
 
-    const param ={email: reqBody.email};
-    const token = jwt.sign(param, config.JWT_SECRET, {expiresIn: '72800s'})
-    //todo: use authorization header
-    res
-    .cookie('access_token', token, {
-        httpsOnly: true,
-        secure:true,
-    })
-    .send('Welcome, you are now logged in.');
+      const param = { email: reqBody.email };
+      const token = jwt.sign(param, config.JWT_SECRET, { expiresIn: "72800s" });
+      
+      //todo: use authorization header
+      res
+        .cookie("access_token", token, {
+          httpsOnly: true,
+          secure: true,
+        })
+        .send("Welcome, you are now logged in.");
+
+      /*   res.json({
+          token
+        })
+         */
+
+
+    } catch (err) {
+      console.log(`Error: ${err}`);
+      res.status(401).send("Unauthorized");
+      return;
+    }
   },
 };
