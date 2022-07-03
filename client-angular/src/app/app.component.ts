@@ -1,28 +1,16 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component } from '@angular/core';
+import { SessionService } from './core/session.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
-  
-  inputType ='text';
- 
-  night = true;
-  items = ['orange', 'peach', 'watermelon'];
-  
+export class AppComponent implements AfterViewInit {
 
+  constructor(private sessionService:SessionService){}
 
-
- 
-
-  isItNight(){
-    return this.night
+  ngAfterViewInit(): void {
+    this.sessionService.redirectToHomepage();
   }
-
-addAnotherItem(){
-  this.items.push('pineapple');
-}
-
 }
