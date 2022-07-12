@@ -2,9 +2,19 @@
 
 
 <!-- <input [type]='inputType'> -->
+<main class="p-4">
+    <div class="mb-3 w-25 row">
+        <label class="col-sm-3 col-form-label" for="">Theme:</label>
+        <div class="col-sm-9">
+            <select (change)="changeTheme()" [(ngModel)]="selectedTheme" class="form-control">
+                <option *ngFor="let theme of themes" [value]="theme.value">{{theme.title}}
+                </option>
+            </select>
+        </div>
+    </div>
 
-<router-outlet></router-outlet>
-
+    <router-outlet></router-outlet>
+</main>
 <app-footer></app-footer>
 
 

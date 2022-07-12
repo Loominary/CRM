@@ -4,13 +4,13 @@ const config = require('../config/dev');
 module.exports= (req, res, next) => {
     const token = req.cookies.access_token;
     
-    if (!token) return res.status(401).send('Access denied. Please sign in');
+   /*  if (!token) return res.status(401).send('Access denied. Please sign in'); */
 
     try{
-        req.user = jwt.verify(token, config.JWT_SECRET);
+/*         req.user = jwt.verify(token, config.JWT_SECRET); */
         next();
     }catch(err){
         console.log(err);
-        res.status(401).send('Access denied, please sign in')
+       /*  res.status(401).send('Access denied, please sign in') */
     }
 }

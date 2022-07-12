@@ -10,6 +10,7 @@ import { SharedModule } from './shared/shared.module';
 import { OrdersModule } from './orders/orders.module';
 import { ProductsModule } from './products/products.module';
 import { HomeModule } from './home/home.module';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { HomeModule } from './home/home.module';
   ],
   imports: [
     BrowserModule,
+    FormsModule,
     SharedModule,
     AppRoutingModule,
     AuthModule,
