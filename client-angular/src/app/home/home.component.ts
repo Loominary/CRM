@@ -7,7 +7,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomeComponent implements OnInit {
 
-  labels =['Customers', 'Produscts', 'Orders'];
+  labels =['Customers', 'Products', 'Orders'];
   title = 'Welcome';
   success =true;
 

@@ -38,6 +38,8 @@ export class CustomersComponent implements OnInit {
             return;
         }
 
+        console.log(this.customerForm.value);
+        
         const customer = this.customerForm.value;
 
         // this.apiService.addCustomer(this.customerForm.value).subscribe({
